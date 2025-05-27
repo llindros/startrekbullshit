@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="charcolors.js"></script> <!-- Make sure this is loaded before chart.js -->
+  <script src="chart.js"></script>
+  <style>
+    .cell {
+      stroke: #ccc;
+    }
+    .axis-label {
+      font-size: 10px;
+      text-anchor: end;
+    }
+  </style>
+</head>
+<body>
+  <svg id="heatmap" width="1200" height="800"></svg>
+  <script>
+    function drawHeatmap(data) {
+      const svg = d3.select("#heatmap");
+      const margin = { top: 100, right: 20, bottom: 20, left: 150 };
+      const width = +svg.attr("width") - margin.left - margin.right;
+      const height = +svg.attr("height") - margin.top - margin.bottom;
+      const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+      // Get unique values
+      const characters = [...new Set(data.map(d => d.character))];
+      const episodes = [...new Set(data.map(d => d.episode))];
+
+      const x = d3.scaleBand().domain(episodes).range([0, width]).padding(0.05);
+      const y = d3.scaleBand().domain(characters).range([0, height]).padding(0.05);
+
+      // Find max lines per division for scaling
+      const divisionMax = {};
+      data.forEach(d => {
+        const division = characterColors[d.character];
+        if (!division) return;
+        if (!divisionMax[division]) divisionMax[division] = 0;
+        if (+d.lines > divisionMax[division]) divisionMax[division] = +d.lines;
+      });
+
+      // Define interpolators for each division
+      const divisionInterpolators = {
+        red: d3.interpolateRgb("#fff5f5", divisionColors.red),
+        gold: d3.interpolateRgb("#fffbe6", divisionColors.gold),
+        blue: d3.interpolateRgb("#e6f0fa", divisionColors.blue),
+        gray: d3.interpolateRgb("#f5f5f5", divisionColors.gray)
+      };
+
+      // Color function by division and value
+      function cellColor(d) {
+        const division = characterColors[d.character];
+        const max = divisionMax[division] || 1;
+        const interp = divisionInterpolators[division] || d3.interpolateGreys;
+        return interp(+d.lines / max);
+      }
+
+      g.selectAll(".cell")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", "cell")
+        .attr("x", d => x(d.episode))
+        .attr("y", d => y(d.character))
+        .attr("width", x.bandwidth())
+        .attr("height", y.bandwidth())
+        .attr("fill", cellColor);
+
+      // Axes
+      g.append("g")
+        .selectAll(".charLabel")
+        .data(characters)
+        .enter()
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", -6)
+        .attr("y", d => y(d) + y.bandwidth() / 2)
+        .attr("dy", ".35em")
+        .text(d => d)
+        .style("text-anchor", "end")
+        .style("fill", d => divisionColors[characterColors[d]] || "#000");
+
+      g.append("g")
+        .selectAll(".epLabel")
+        .data(episodes)
+        .enter()
+        .append("text")
+        .attr("class", "axis-label")
+        .attr("x", d => x(d) + x.bandwidth() / 2)
+        .attr("y", -6)
+        .attr("transform", d => `rotate(-90, ${x(d) + x.bandwidth() / 2}, -6)`)
+        .text(d => d)
+        .style("text-anchor", "start");
+    }
+  </script>
+</body>
+</html>
