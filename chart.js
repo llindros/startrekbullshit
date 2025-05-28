@@ -36,5 +36,7 @@ d3.csv("TNG.csv").then(data => {
     })
     .filter(d => topCharacters.has(d.character) && d.character !== "NA");
 
+
+
   drawHeatmap(aggregated);
 });
