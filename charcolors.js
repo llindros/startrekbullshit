@@ -14,6 +14,7 @@ const characterColors = {
   "BARCLAY": "gold",
   "KURN": "gold",
   "K'MTAR": "gold",
+  "GEORDI'S COM VOICE": "gold",
 
   "TROI": "blue",
   "BEVERLY": "blue",
@@ -39,12 +40,14 @@ const characterColors = {
   "VASH": "gray",
   "LWAXANA": "gray",
   "GOWRON": "gray",
+  "LORE": "gray",
+  "SOONG": "gray",
 };
 
 
 const divisionColors = {
-  red: "#e63946",     // Command
-  gold: "#f4a261",    // Ops
-  blue: "#457b9d",    // Science/Medical
+  red: "#fc0000",     // Command
+  gold: "#e7dc01",    // Ops
+  blue: "#012ee7",    // Science/Medical
   gray: "#a8a8a8"     // Non-Starfleet/Civilian
 };
