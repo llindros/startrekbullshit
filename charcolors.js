@@ -49,5 +49,5 @@ const divisionColors = {
   red: "#fc0000",     // Command
   gold: "#e7dc01",    // Ops
   blue: "#012ee7",    // Science/Medical
-  gray: "#a8a8a8"     // Non-Starfleet/Civilian
+  gray: "#424242"     // Non-Starfleet/Civilian
 };
